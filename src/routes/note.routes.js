@@ -13,6 +13,7 @@ const {
   getNotesByStatus,
   getNoteSummary,
   filterNotes,
+  getPinnedNotes,
 } = require("../controllers/note.controller");
 
 // CRUD
@@ -25,6 +26,7 @@ router.get("/status/:isPinned", getNotesByStatus);
 
 // Query param sections
 router.get("/filter", filterNotes);
+router.get("/filter/pinned", getPinnedNotes);
 router.post("/", createNote);
 router.get("/", getAllNotes);
 router.get("/:id/summary", getNoteSummary);
