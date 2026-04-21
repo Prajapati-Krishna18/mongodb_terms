@@ -600,6 +600,40 @@ const sortNotes = async (req, res) => {
   }
 };
 
+// 19. GET /api/notes/sort/pinned — Sort pinned notes only
+const sortPinnedNotes = async (req, res) => {
+  try {
+    const allowed = ["title", "createdAt", "updatedAt", "category"];
+    const sortBy = req.query.sortBy || "createdAt";
+    const order = req.query.order === "asc" ? 1 : -1;
+
+    if (!allowed.includes(sortBy)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid sortBy. Allowed: title, createdAt, updatedAt, category",
+        data: null,
+      });
+    }
+
+    const notes = await Note.find({ isPinned: true }).sort({ [sortBy]: order });
+
+    res.status(200).json({
+      success: true,
+      message: `Pinned notes sorted by ${sortBy} in ${
+        req.query.order === "asc" ? "ascending" : "descending"
+      } order`,
+      count: notes.length,
+      data: notes,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+      data: null,
+    });
+  }
+};
+
 module.exports = {
   createNote,
   createBulkNotes,
@@ -619,4 +653,5 @@ module.exports = {
   paginateNotes,
   paginateByCategory,
   sortNotes,
+  sortPinnedNotes,
 };

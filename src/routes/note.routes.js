@@ -19,6 +19,7 @@ const {
   paginateNotes,
   paginateByCategory,
   sortNotes,
+  sortPinnedNotes,
 } = require("../controllers/note.controller");
 
 // CRUD
@@ -41,6 +42,7 @@ router.get("/paginate/category/:category", paginateByCategory);
 
 // Sorting
 router.get("/sort", sortNotes);
+router.get("/sort/pinned", sortPinnedNotes);
 router.post("/", createNote);
 router.get("/", getAllNotes);
 router.get("/:id/summary", getNoteSummary);
