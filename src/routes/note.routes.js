@@ -12,13 +12,19 @@ const {
   getNotesByCategory,
   getNotesByStatus,
   getNoteSummary,
+  filterNotes,
 } = require("../controllers/note.controller");
 
 // CRUD
 router.post("/bulk", createBulkNotes);
 router.delete("/bulk", deleteBulkNotes);
+
+// Route param sections
 router.get("/category/:category", getNotesByCategory);
 router.get("/status/:isPinned", getNotesByStatus);
+
+// Query param sections
+router.get("/filter", filterNotes);
 router.post("/", createNote);
 router.get("/", getAllNotes);
 router.get("/:id/summary", getNoteSummary);
