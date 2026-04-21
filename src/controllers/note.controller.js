@@ -461,6 +461,43 @@ const filterByCategory = async (req, res) => {
   }
 };
 
+// 15. GET /api/notes/filter/date-range — Filter by date range
+const filterByDateRange = async (req, res) => {
+  try {
+    const { from, to } = req.query;
+
+    if (!from || !to) {
+      return res.status(400).json({
+        success: false,
+        message: "Both 'from' and 'to' query params are required",
+        data: null,
+      });
+    }
+
+    const filter = {
+      createdAt: {
+        $gte: new Date(from),
+        $lte: new Date(to),
+      },
+    };
+
+    const notes = await Note.find(filter);
+
+    res.status(200).json({
+      success: true,
+      message: `Notes fetched between ${from} and ${to}`,
+      count: notes.length,
+      data: notes,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+      data: null,
+    });
+  }
+};
+
 module.exports = {
   createNote,
   createBulkNotes,
@@ -476,4 +513,5 @@ module.exports = {
   filterNotes,
   getPinnedNotes,
   filterByCategory,
+  filterByDateRange,
 };
