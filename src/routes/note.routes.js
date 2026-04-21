@@ -18,6 +18,7 @@ const {
   filterByDateRange,
   paginateNotes,
   paginateByCategory,
+  sortNotes,
 } = require("../controllers/note.controller");
 
 // CRUD
@@ -37,6 +38,9 @@ router.get("/filter/date-range", filterByDateRange);
 // Pagination
 router.get("/paginate", paginateNotes);
 router.get("/paginate/category/:category", paginateByCategory);
+
+// Sorting
+router.get("/sort", sortNotes);
 router.post("/", createNote);
 router.get("/", getAllNotes);
 router.get("/:id/summary", getNoteSummary);
