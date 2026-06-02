@@ -1,0 +1,18 @@
+{
+  "name": "search_combined_queries_assignment",
+  "version": "1.0.0",
+  "description": "Assignment 3 - Search and Combined Queries Note REST API",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js"
+  },
+  "dependencies": {
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "mongoose": "^9.5.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  }
+}
