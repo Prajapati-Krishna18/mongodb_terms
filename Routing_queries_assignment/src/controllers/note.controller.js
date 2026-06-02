@@ -1,6 +1,16 @@
 const mongoose = require("mongoose");
 const Note = require("../models/note.model");
 
+// Helper function to send standard error responses
+const handleError = (res, error) => {
+  const statusCode = error.name === "ValidationError" || error.name === "CastError" ? 400 : 500;
+  res.status(statusCode).json({
+    success: false,
+    message: error.message,
+    data: null,
+  });
+};
+
 // 1. POST /api/notes — Create a note
 const createNote = async (req, res) => {
   try {
@@ -27,11 +37,7 @@ const createNote = async (req, res) => {
       data: note,
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-      data: null,
-    });
+    handleError(res, error);
   }
 };
 
@@ -56,11 +62,7 @@ const createBulkNotes = async (req, res) => {
       data: createdNotes,
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-      data: null,
-    });
+    handleError(res, error);
   }
 };
 
@@ -75,11 +77,7 @@ const getAllNotes = async (req, res) => {
       data: notes,
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-      data: null,
-    });
+    handleError(res, error);
   }
 };
 
@@ -112,11 +110,7 @@ const getNoteById = async (req, res) => {
       data: note,
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-      data: null,
-    });
+    handleError(res, error);
   }
 };
 
@@ -129,6 +123,15 @@ const replaceNote = async (req, res) => {
       return res.status(400).json({
         success: false,
         message: "Invalid note ID",
+        data: null,
+      });
+    }
+
+    const { title, content } = req.body;
+    if (!title || !content) {
+      return res.status(400).json({
+        success: false,
+        message: "Title and content are required",
         data: null,
       });
     }
@@ -153,11 +156,7 @@ const replaceNote = async (req, res) => {
       data: note,
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-      data: null,
-    });
+    handleError(res, error);
   }
 };
 
@@ -174,7 +173,7 @@ const updateNote = async (req, res) => {
       });
     }
 
-    if (Object.keys(req.body).length === 0) {
+    if (!req.body || Object.keys(req.body).length === 0) {
       return res.status(400).json({
         success: false,
         message: "No fields provided to update",
@@ -201,11 +200,7 @@ const updateNote = async (req, res) => {
       data: note,
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-      data: null,
-    });
+    handleError(res, error);
   }
 };
 
@@ -238,11 +233,7 @@ const deleteNote = async (req, res) => {
       data: null,
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-      data: null,
-    });
+    handleError(res, error);
   }
 };
 
@@ -259,6 +250,15 @@ const deleteBulkNotes = async (req, res) => {
       });
     }
 
+    const invalidId = ids.find(id => !mongoose.Types.ObjectId.isValid(id));
+    if (invalidId) {
+      return res.status(400).json({
+        success: false,
+        message: "One or more note IDs are invalid",
+        data: null,
+      });
+    }
+
     const result = await Note.deleteMany({ _id: { $in: ids } });
 
     res.status(200).json({
@@ -267,11 +267,7 @@ const deleteBulkNotes = async (req, res) => {
       data: null,
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-      data: null,
-    });
+    handleError(res, error);
   }
 };
 
@@ -306,11 +302,7 @@ const getNotesByCategory = async (req, res) => {
       data: notes,
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-      data: null,
-    });
+    handleError(res, error);
   }
 };
 
@@ -337,11 +329,7 @@ const getNotesByStatus = async (req, res) => {
       data: notes,
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-      data: null,
-    });
+    handleError(res, error);
   }
 };
 
@@ -374,11 +362,7 @@ const getNoteSummary = async (req, res) => {
       data: note,
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-      data: null,
-    });
+    handleError(res, error);
   }
 };
 
@@ -400,11 +384,7 @@ const filterNotes = async (req, res) => {
       data: notes,
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-      data: null,
-    });
+    handleError(res, error);
   }
 };
 
@@ -423,11 +403,7 @@ const getPinnedNotes = async (req, res) => {
       data: notes,
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-      data: null,
-    });
+    handleError(res, error);
   }
 };
 
@@ -453,11 +429,7 @@ const filterByCategory = async (req, res) => {
       data: notes,
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-      data: null,
-    });
+    handleError(res, error);
   }
 };
 
@@ -490,11 +462,7 @@ const filterByDateRange = async (req, res) => {
       data: notes,
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-      data: null,
-    });
+    handleError(res, error);
   }
 };
 
@@ -523,11 +491,7 @@ const paginateNotes = async (req, res) => {
       },
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-      data: null,
-    });
+    handleError(res, error);
   }
 };
 
@@ -558,11 +522,7 @@ const paginateByCategory = async (req, res) => {
       },
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-      data: null,
-    });
+    handleError(res, error);
   }
 };
 
@@ -592,11 +552,7 @@ const sortNotes = async (req, res) => {
       data: notes,
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-      data: null,
-    });
+    handleError(res, error);
   }
 };
 
@@ -626,11 +582,7 @@ const sortPinnedNotes = async (req, res) => {
       data: notes,
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-      data: null,
-    });
+    handleError(res, error);
   }
 };
 
