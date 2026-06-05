@@ -5,6 +5,11 @@ const app = express();
 
 app.use(express.json());
 
+// Root route
+app.get("/", (req, res) => {
+  res.send("Notes Management CRUD API is running...");
+});
+
 app.use("/api/notes", noteRoutes);
 
 // Global error handler
